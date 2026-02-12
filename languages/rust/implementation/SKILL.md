@@ -1,42 +1,28 @@
 ---
 name: rust-implementation
-description: Rust implementation best practices and patterns.
+description: Rust pitfalls Claude often gets wrong. Load when writing or reviewing .rs files.
 ---
 
-# Rust Implementation
+# Rust Implementation — What Claude Gets Wrong
 
-## Core Principles
-- **Ownership is the language** — Think in terms of ownership, borrowing, lifetimes
-- **Make illegal states unrepresentable** — Use the type system aggressively
-- **Zero-cost abstractions** — Don't fear generics and traits
+## Ownership Mistakes
+- **Don't `.clone()` to satisfy the borrow checker** — fix the ownership model first. Clone is a last resort.
+- **Don't use `Rc`/`Arc` by default** — only when shared ownership is genuinely required
+- `Cow<'_, str>` when you might or might not need to own — Claude rarely suggests this
+- Prefer `&str` in function params, `String` in struct fields
 
 ## Error Handling
-- `Result<T, E>` for recoverable errors, `panic!` only for bugs
-- Use `?` operator for propagation
-- `thiserror` for library error types, `anyhow` for applications
-- Implement `Display` and `Error` for custom error types
+- `thiserror` for libraries (typed errors), `anyhow` for applications (ergonomic errors) — don't mix them up
+- Always `?` over `unwrap()` in non-test code — Claude sometimes uses `unwrap` for convenience
+- `unwrap()` is acceptable in tests and examples only
+- Use `#[error("context: {source}")]` with `thiserror` — not bare error messages
 
-## Ownership & Borrowing
-- Prefer borrowing (`&T`, `&mut T`) over ownership transfer
-- Use `Clone` consciously — it's a code smell if overused
-- `Cow<'_, str>` when you might or might not need to own
-- Avoid `Rc`/`Arc` unless shared ownership is genuinely needed
+## Common Bugs
+- `match` exhaustiveness: don't use `_ =>` catch-all unless truly generic — enumerate variants explicitly
+- Forgetting `Send + Sync` bounds on async code — surfaces as confusing compile errors
+- Using `String` where `&str` suffices — unnecessary allocation
+- `Vec::new()` + push loop when `collect()` from iterator is cleaner
 
-## Patterns
-- Builder pattern for complex constructors
-- Newtype pattern for type safety (`struct UserId(u64)`)
-- `impl From<T>` / `Into<T>` for conversions
-- Iterator chains over manual loops
-- `#[derive(...)]` — derive what you can
-
-## Common Gotchas
-- String types: `&str` for borrowing, `String` for owning
-- `match` must be exhaustive — use `_` only when truly catch-all
-- Async: `tokio` or `async-std`, not both
-- Lifetimes: elision covers most cases; annotate only when compiler asks
-
-## Build & Lint
-- `cargo check` — fast type check
-- `cargo clippy` — comprehensive linting
-- `cargo fmt --check` — format check
-- `cargo build --release` — optimized build
+## Build Verification
+- `cargo check` → `cargo clippy -- -D warnings` → `cargo test` → `cargo fmt --check`
+- Treat clippy warnings as errors (`-D warnings`)

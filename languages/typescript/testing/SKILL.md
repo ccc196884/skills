@@ -1,49 +1,26 @@
 ---
 name: typescript-testing
-description: TypeScript/JavaScript testing patterns and conventions.
+description: TypeScript/JavaScript testing mistakes Claude makes. Load when writing or reviewing test files (*.test.ts, *.spec.ts).
 ---
 
-# TypeScript Testing
+# TypeScript Testing — What Claude Gets Wrong
 
-## Philosophy
-- **Test behavior, not implementation** — Tests survive refactoring
-- Component tests: test what the user sees, not internal state
-- Mock at module boundaries (HTTP, DB), not internals
+## Critical Mistakes
+- **Test behavior, not implementation** — don't assert on internal state or mock internals
+- **Don't over-mock** — if you need 5+ mocks, the code needs refactoring, not more mocks
+- **Always restore mocks** — `afterEach(() => vi.restoreAllMocks())` or Jest equivalent
+- **Snapshot tests are a trap** — use sparingly; they pass silently when updated without review
 
-## Frameworks
-- **Vitest** (preferred) or **Jest** for unit/integration
-- **Testing Library** for component tests
-- **Playwright** or **Cypress** for E2E
+## Framework Choice
+- Check `package.json` first — use whatever the project already uses (Vitest, Jest, Mocha)
+- Don't introduce a new test framework without checking existing setup
 
-## Patterns
-```typescript
-describe("UserService", () => {
-  it("returns user by ID", async () => {
-    const user = await service.findById("123");
-    expect(user.name).toBe("Alice");
-  });
+## Component Testing (React/Vue)
+- Use Testing Library — query by role/label, NOT by CSS class or test-id
+- `screen.getByRole("button", { name: "Submit" })` > `screen.getByTestId("submit-btn")`
+- Test user interactions: click, type, submit — not component internals
+- `waitFor` for async updates, not arbitrary `setTimeout`
 
-  it("throws NotFoundError for unknown ID", async () => {
-    await expect(service.findById("unknown"))
-      .rejects.toThrow(NotFoundError);
-  });
-});
-```
-
-## Conventions
-- `describe/it` blocks with clear human-readable descriptions
-- One concept per `it` block
-- Use `beforeEach` for shared setup, not shared mutable state
-- Prefer `toEqual` for objects, `toBe` for primitives
-- Snapshot tests: use sparingly, update intentionally
-
-## Mocking
-- `vi.mock()` / `jest.mock()` for module-level mocking
-- `vi.spyOn()` to observe without replacing
-- Always restore mocks: `afterEach(() => vi.restoreAllMocks())`
-- Prefer dependency injection over module mocking when possible
-
-## Coverage
-- `vitest run --coverage` / `jest --coverage`
-- Focus on branch coverage over line coverage
-- Untested branches = untested behavior
+## Async Testing
+- Always `await` async assertions: `await expect(fn()).rejects.toThrow()`
+- Missing `await` = test passes without actually running the assertion

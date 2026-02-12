@@ -1,57 +1,41 @@
 ---
 name: rust-testing
-description: Rust testing patterns and conventions.
+description: Rust testing mistakes Claude makes. Load when writing or reviewing Rust test code.
 ---
 
-# Rust Testing
+# Rust Testing — What Claude Gets Wrong
 
-## Philosophy
-- Unit tests live in the same file: `#[cfg(test)] mod tests`
-- Integration tests in `tests/` directory
-- Compile-time guarantees reduce need for runtime tests — focus on logic
+## Critical Mistakes
+- **Tests go in `#[cfg(test)] mod tests` in the SAME file** — don't create separate test files for unit tests
+- **`tests/` directory is for integration tests ONLY** — tests public API from outside the crate
+- **`unwrap()` is fine in tests** — but `expect("reason")` is better for debugging failures
+- Don't import `use super::*` if you can import specific items
 
-## Unit Tests
+## Patterns
 ```rust
 #[cfg(test)]
 mod tests {
     use super::*;
 
     #[test]
-    fn parse_valid_input() {
-        let result = parse("hello").unwrap();
-        assert_eq!(result, Expected::Hello);
+    fn valid_input_returns_ok() {
+        let result = parse("valid").expect("should parse");
+        assert_eq!(result.value, 42);
     }
 
     #[test]
-    #[should_panic(expected = "empty input")]
-    fn parse_empty_panics() {
-        parse("");
+    fn empty_input_returns_error() {
+        assert!(parse("").is_err());
     }
 }
 ```
 
-## Conventions
-- `#[test]` for each test function
-- `assert_eq!(got, want)` with descriptive variable names
-- `#[should_panic]` for expected panics
-- Use `Result<(), E>` return type for tests that use `?`
-- `#[ignore]` for slow tests, run with `cargo test -- --ignored`
+## Gotchas
+- `#[should_panic(expected = "substring")]` — the `expected` is a substring match, not exact
+- `#[ignore]` for slow tests — run with `cargo test -- --ignored`
+- `cargo test` runs BOTH unit and integration tests — use `--lib` for unit only
+- Test binary names can conflict — each `tests/*.rs` file is a separate binary
 
-## Integration Tests
-- `tests/` directory, each file is a separate crate
-- Can only test public API
-- Shared helpers in `tests/common/mod.rs`
-
-## Property-Based Testing
-- `proptest` or `quickcheck` for generative testing
-- Useful for parsers, serializers, mathematical properties
-
-## Benchmarks
-- `criterion` crate for benchmarks
-- `cargo bench` to run
-- Compare with statistical analysis
-
-## Commands
-- `cargo test` — all unit + integration tests
-- `cargo test -- --test-threads=1` — serial execution
-- `cargo test {name}` — filter by test name
+## Async Tests
+- Use `#[tokio::test]` for async tests — Claude sometimes forgets the macro
+- `tokio::test` creates a runtime per test — don't create your own

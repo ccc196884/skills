@@ -1,46 +1,30 @@
 ---
 name: git-workflow
-description: Git workflow conventions for contributing to open source projects.
+description: Git workflow for open source contributions. Load when making commits or PRs to external repos.
 ---
 
-# Git Workflow
+# Git Workflow — OSS Contributions
 
-## Branch Naming
-- `feat/{issue-number}-short-description` — new feature
-- `fix/{issue-number}-short-description` — bug fix
-- `docs/{description}` — documentation only
-- `refactor/{description}` — code restructuring
+## Fork Workflow
+1. Fork → clone your fork → `git remote add upstream <original>`
+2. Branch from up-to-date main: `git fetch upstream && git checkout -b feat/123-desc upstream/main`
+3. Push to YOUR fork, PR against upstream
 
 ## Commit Messages
-- Format: `type: concise description`
+- Format: `type: concise imperative description`
 - Types: `feat`, `fix`, `docs`, `test`, `refactor`, `chore`, `ci`
-- Imperative mood: "add feature" not "added feature"
-- Reference issues: `feat: add email validation (closes #123)`
-- Keep first line under 72 characters
+- Reference issues: `feat: add validation (closes #123)`
+- First line < 72 chars
 
 ## Before Pushing
-1. Rebase on upstream main: `git fetch upstream && git rebase upstream/main`
-2. Resolve conflicts cleanly (don't merge, rebase)
+1. `git fetch upstream && git rebase upstream/main`
+2. Resolve conflicts (rebase, don't merge)
 3. Squash WIP commits into logical units
-4. Verify all tests pass after rebase
-
-## Pull Request Conventions
-- One PR per issue/feature
-- Fill in the PR template if one exists
-- Link the issue: `Closes #XXXX`
-- Keep PRs focused and reviewable (< 400 lines preferred)
-- Respond to review comments promptly
+4. Run full test suite after rebase
 
 ## DCO Sign-Off
-Some projects require Developer Certificate of Origin:
+Many OSS projects require it:
 ```bash
 git commit -s -m "feat: add feature"
 ```
-The `-s` flag adds `Signed-off-by: Name <email>` to the commit.
-
-## Fork Workflow (Open Source)
-1. Fork the repo
-2. Clone your fork
-3. Add upstream remote: `git remote add upstream <original-repo-url>`
-4. Create feature branch from up-to-date main
-5. Push to your fork, open PR against upstream
+Check CONTRIBUTING.md — if DCO is required and you forget `-s`, the CI will reject.

@@ -1,10 +1,10 @@
 ---
 name: rust
-description: Rust development best practices and patterns. Loaded when working with .rs files.
+description: Rust development guardrails. Loaded when working with .rs files.
 ---
 
 # Rust
 
-See subdirectories for detailed guidance:
-- `implementation/` — ownership, error handling, patterns
-- `testing/` — unit tests, integration tests, property-based testing
+Load the relevant sub-skill based on what you're doing:
+- **Writing/reviewing implementation?** → Read [implementation/SKILL.md](implementation/SKILL.md) for ownership pitfalls
+- **Writing/reviewing tests?** → Read [testing/SKILL.md](testing/SKILL.md) for Rust test patterns and mistakes to avoid

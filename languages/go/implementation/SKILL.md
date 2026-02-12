@@ -1,42 +1,27 @@
 ---
 name: go-implementation
-description: Go implementation best practices, idioms, and patterns.
+description: Go-specific pitfalls and patterns Claude often gets wrong. Load when writing or reviewing .go files.
 ---
 
-# Go Implementation
+# Go Implementation — What Claude Gets Wrong
 
-## Core Principles
-- **Simplicity over cleverness** — Go rewards boring, readable code
-- **Errors are values** — Handle them explicitly, never ignore
-- **Composition over inheritance** — Use interfaces and embedding
+## Error Handling (common mistakes)
+- Always wrap with context: `fmt.Errorf("doing X: %w", err)` — not bare `return err`
+- Use `%w` (wrappable) vs `%v` (opaque) consciously — default to `%w`
+- Never `_ = someFunc()` to silence errors in production code
 
-## Error Handling
-- Always check errors: `if err != nil { return fmt.Errorf("context: %w", err) }`
-- Wrap errors with `%w` for unwrapping, `%v` when wrapping is not needed
-- Use `errors.Is()` / `errors.As()` for checking, not string comparison
-- Define sentinel errors as package-level `var ErrNotFound = errors.New("not found")`
+## Gotchas Claude Frequently Hits
+- **nil interface trap**: `var err *MyError = nil; var i error = err; i != nil` is TRUE
+- **Slice append**: `append` may return a new backing array — always reassign: `s = append(s, v)`
+- **defer args**: `defer fmt.Println(x)` captures `x` NOW, not at defer time
+- **Loop var in goroutines**: Pre-Go 1.22, loop vars are shared — capture locally or use Go 1.22+
+- **init() ordering**: Avoid `init()` when possible; it makes testing and reasoning harder
 
-## Naming
-- Short, lowercase package names (`http`, `os`, not `httpUtils`)
-- Exported: `PascalCase`. Unexported: `camelCase`
-- Interfaces: single-method → `-er` suffix (`Reader`, `Writer`)
-- Avoid stuttering: `http.Client` not `http.HTTPClient`
-- Acronyms all caps: `ID`, `URL`, `HTTP`
+## Patterns Claude Should Prefer
+- Functional options over config structs for public APIs with optional params
+- `Accept interfaces, return structs` — but don't create interfaces preemptively
+- Table-driven validation over deeply nested if/else
 
-## Patterns
-- Accept interfaces, return structs
-- Use `context.Context` as first param for cancellation/timeouts
-- `defer` for cleanup (files, locks, connections)
-- Channel direction in function signatures: `func consume(ch <-chan int)`
-- Functional options for configurable constructors
-
-## Common Gotchas
-- Loop variable capture in goroutines (use local copy or Go 1.22+ loop semantics)
-- `nil` interface vs `nil` concrete type are not equal
-- Slice append may or may not allocate — don't assume capacity
-- `defer` evaluates args immediately, executes later
-
-## Build & Lint
-- `go vet ./...` — catch common mistakes
-- `golangci-lint run` — comprehensive linting
-- `go build ./...` — verify compilation
+## Build Verification
+- `go vet ./...` then `golangci-lint run` then `go test -race ./...`
+- Check for `//nolint` directives — each must have a justification comment

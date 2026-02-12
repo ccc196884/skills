@@ -1,57 +1,35 @@
 ---
 name: go-testing
-description: Go testing patterns and conventions.
+description: Go testing mistakes Claude makes. Load when writing or reviewing Go test files (*_test.go).
 ---
 
-# Go Testing
+# Go Testing — What Claude Gets Wrong
 
-## Philosophy
-- Go tests live next to the code (`foo_test.go` beside `foo.go`)
-- Prefer real implementations over mocks — use interfaces at boundaries only
-- Tests should be fast, independent, and deterministic
+## Critical Mistakes to Avoid
+- **Never skip `t.Helper()`** in test helpers — stack traces become useless without it
+- **Never use `assert` libraries by default** — use standard `t.Errorf`/`t.Fatalf` unless the project already uses one
+- **Don't mock everything** — Go idiom is real implementations with interfaces only at boundaries (DB, HTTP, filesystem)
+- **Don't forget `t.Parallel()`** where safe — but never with shared mutable state
 
-## Table-Driven Tests
+## Table-Driven Test Template
+Use this structure. Don't deviate:
 ```go
-tests := []struct {
-    name    string
-    input   string
-    want    string
-    wantErr bool
-}{
-    {"valid input", "hello", "HELLO", false},
-    {"empty input", "", "", true},
-}
 for _, tt := range tests {
     t.Run(tt.name, func(t *testing.T) {
-        got, err := Transform(tt.input)
-        if (err != nil) != tt.wantErr {
-            t.Errorf("error = %v, wantErr %v", err, tt.wantErr)
-            return
-        }
-        if got != tt.want {
-            t.Errorf("got %q, want %q", got, tt.want)
-        }
+        // arrange → act → assert
     })
 }
 ```
+- Each test case MUST have a `name` field
+- Use `wantErr bool` pattern for error cases
+- `got`/`want` naming for actual/expected
 
-## Conventions
-- Use `t.Run()` for subtests — enables selective test execution
-- Use `t.Helper()` in test helper functions
-- `testdata/` directory for fixtures (ignored by `go build`)
-- `t.Parallel()` for tests that can run concurrently
-- `t.Cleanup()` for teardown
+## Gotchas
+- `testdata/` is magic — `go build` ignores it, use for fixtures
+- `//go:build integration` tag for slow tests — don't mix with unit tests
+- `TestMain` runs ONCE per package, not per test — use for expensive shared setup only
+- `-count=1` disables test caching — use in CI
 
 ## Race Detection
-- Always run `go test -race ./...` in CI
-- Design for concurrency safety from the start
-
-## Integration Tests
-- Use build tags: `//go:build integration`
-- Separate from unit tests: `go test -tags=integration ./...`
-- Use `TestMain(m *testing.M)` for shared setup/teardown
-
-## Benchmarks
-- `func Benchmark_{Name}(b *testing.B)` with `b.N` loop
-- `go test -bench=. -benchmem` for memory allocation stats
-- Compare with `benchstat`
+- `go test -race ./...` is NON-NEGOTIABLE in CI
+- If a test can't run with `-race`, the code has a bug, not the test

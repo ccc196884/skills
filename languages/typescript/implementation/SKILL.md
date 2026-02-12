@@ -1,41 +1,27 @@
 ---
 name: typescript-implementation
-description: TypeScript implementation best practices and patterns.
+description: TypeScript pitfalls Claude often gets wrong. Load when writing or reviewing .ts/.tsx files.
 ---
 
-# TypeScript Implementation
+# TypeScript Implementation — What Claude Gets Wrong
 
-## Core Principles
-- **Type safety first** — Avoid `any`; use `unknown` when type is truly unknown
-- **Strict mode always** — `"strict": true` in tsconfig.json
-- **Infer when obvious, annotate when not** — Let TS do its job
+## Type Safety Mistakes
+- **Never use `any`** — use `unknown` + type narrowing, or generic `<T>`
+- **`as` casts are a code smell** — prefer discriminated unions or type guards
+- **Avoid enums** — use `as const` objects or string union types (enums have runtime overhead and quirks)
+- `satisfies` operator > type annotation when you want to check without widening
 
-## Types
-- Prefer `interface` for object shapes (extendable), `type` for unions/intersections
-- Use discriminated unions over type assertions
-- `readonly` for immutable properties
-- Use `as const` for literal types
-- Avoid enums — prefer `const` objects or union types
+## Common Bugs Claude Introduces
+- Using `||` for defaults when `??` is correct (`0` and `""` are falsy but valid)
+- Forgetting `readonly` on arrays/objects that shouldn't be mutated
+- Creating interfaces that should be `type` (unions, intersections, mapped types need `type`)
+- Over-chaining `?.` — if 4+ levels deep, the data model needs fixing
 
-## Error Handling
-- Use typed errors or Result types over throwing
-- If throwing, throw `Error` subclasses, never strings
-- `try/catch` at boundaries, not everywhere
+## React Pitfalls (if applicable)
+- Don't use `React.FC` — it's deprecated in community practice. Use plain function with typed props
+- `children` type is `ReactNode`, not `JSX.Element` or `React.ReactElement`
+- Hooks rules: no conditional `use*()` calls — Claude sometimes generates these
+- Keys must be stable IDs, NEVER array index (unless static list)
 
-## Patterns
-- Use `satisfies` operator for type checking without widening
-- Prefer `Map`/`Set` over plain objects for dynamic keys
-- Use `Partial<T>`, `Pick<T>`, `Omit<T>` utility types
-- Nullish coalescing `??` over logical OR `||` for defaults
-- Optional chaining `?.` — but don't chain more than 3 levels
-
-## React (if applicable)
-- Functional components only
-- Props interface named `{ComponentName}Props`
-- Use `ReactNode` for children type, not `JSX.Element`
-- Custom hooks: prefix with `use`, return tuple or object
-
-## Build & Lint
-- `tsc --noEmit` — type check without build
-- `eslint .` — lint
-- `prettier --check .` — format check
+## Build Verification
+- `tsc --noEmit` → `eslint .` → `prettier --check .` → `npm test`
