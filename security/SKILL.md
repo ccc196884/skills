@@ -23,3 +23,10 @@ description: Security mistakes Claude introduces — SQL injection, hardcoded se
 ## Crypto
 - Never implement custom crypto — use well-known libraries
 - `crypto/rand` (Go) / `secrets` (Python) / `crypto.randomBytes` (Node) — NOT math/random
+
+## Static Analysis (when available)
+Adapted from [Trail of Bits](https://github.com/trailofbits/skills) security skills.
+- **Semgrep**: fast pattern matching, good for quick scans. `semgrep --config auto .`
+- **CodeQL**: deep interprocedural analysis, catches complex data flow issues
+- Zero findings ≠ secure code — could mean poor config or missing rules
+- If project has `.semgrep.yml` or CodeQL workflows, run them before PR
