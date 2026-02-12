@@ -1,6 +1,7 @@
 ---
 name: python
 description: Python development guardrails. Routes to implementation or testing sub-skills based on current task.
+user-invocable: false
 ---
 
 # Python
