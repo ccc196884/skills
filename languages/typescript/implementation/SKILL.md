@@ -1,6 +1,6 @@
 ---
 name: typescript-implementation
-description: TypeScript pitfalls Claude often gets wrong. Load when writing or reviewing .ts/.tsx files.
+description: TypeScript implementation pitfalls — type safety, any avoidance, React patterns. Load when writing new TS code or reviewing implementation (not test files).
 ---
 
 # TypeScript Implementation — What Claude Gets Wrong

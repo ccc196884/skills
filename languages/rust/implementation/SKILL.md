@@ -1,6 +1,6 @@
 ---
 name: rust-implementation
-description: Rust pitfalls Claude often gets wrong. Load when writing or reviewing .rs files.
+description: Rust implementation pitfalls — ownership, clone abuse, error type choice. Load when writing new Rust code or reviewing implementation (not test code).
 ---
 
 # Rust Implementation — What Claude Gets Wrong

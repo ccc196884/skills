@@ -1,6 +1,6 @@
 ---
 name: rust
-description: Rust development guardrails. Loaded when working with .rs files.
+description: Rust development guardrails. Routes to implementation or testing sub-skills based on current task.
 ---
 
 # Rust

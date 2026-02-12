@@ -1,6 +1,6 @@
 ---
 name: typescript
-description: TypeScript development guardrails. Loaded when working with .ts/.tsx files.
+description: TypeScript development guardrails. Routes to implementation or testing sub-skills based on current task.
 ---
 
 # TypeScript

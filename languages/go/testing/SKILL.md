@@ -1,6 +1,6 @@
 ---
 name: go-testing
-description: Go testing mistakes Claude makes. Load when writing or reviewing Go test files (*_test.go).
+description: Go test pitfalls — table-driven patterns, race detection, mocking rules. Load only when writing or reviewing *_test.go files.
 ---
 
 # Go Testing — What Claude Gets Wrong

@@ -1,6 +1,6 @@
 ---
 name: python-implementation
-description: Python pitfalls Claude often gets wrong. Load when writing or reviewing .py files.
+description: Python implementation pitfalls — type hints, mutable defaults, exception chaining. Load when writing new Python code or reviewing implementation (not test files).
 ---
 
 # Python Implementation — What Claude Gets Wrong

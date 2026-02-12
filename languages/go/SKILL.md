@@ -1,6 +1,6 @@
 ---
 name: go
-description: Go development guardrails. Loaded when working with .go files.
+description: Go development guardrails. Routes to implementation or testing sub-skills based on current task.
 ---
 
 # Go

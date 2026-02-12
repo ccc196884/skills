@@ -1,6 +1,6 @@
 ---
 name: python
-description: Python development guardrails. Loaded when working with .py files.
+description: Python development guardrails. Routes to implementation or testing sub-skills based on current task.
 ---
 
 # Python

@@ -1,6 +1,6 @@
 ---
 name: typescript-testing
-description: TypeScript/JavaScript testing mistakes Claude makes. Load when writing or reviewing test files (*.test.ts, *.spec.ts).
+description: TS/JS test pitfalls — Testing Library queries, mock cleanup, async assertions. Load only when writing or reviewing *.test.ts, *.spec.ts, *.test.js files.
 ---
 
 # TypeScript Testing — What Claude Gets Wrong

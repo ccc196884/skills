@@ -1,6 +1,6 @@
 ---
 name: security
-description: Security mistakes Claude introduces. Load when working with auth, crypto, user input, or secrets.
+description: Security mistakes Claude introduces — SQL injection, hardcoded secrets, timing attacks. Load when code handles auth, passwords, tokens, user input, or cryptography.
 ---
 
 # Security — What Claude Gets Wrong

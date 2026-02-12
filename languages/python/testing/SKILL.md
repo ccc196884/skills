@@ -1,6 +1,6 @@
 ---
 name: python-testing
-description: Python testing mistakes Claude makes. Load when writing or reviewing test files (test_*.py, *_test.py).
+description: pytest pitfalls — fixture scoping, mock patching location, parametrize patterns. Load only when writing or reviewing test_*.py or *_test.py files.
 ---
 
 # Python Testing — What Claude Gets Wrong

@@ -1,6 +1,6 @@
 ---
 name: go-implementation
-description: Go-specific pitfalls and patterns Claude often gets wrong. Load when writing or reviewing .go files.
+description: Go implementation pitfalls — error handling, nil traps, defer gotchas. Load when writing new Go code or reviewing Go implementation (not tests).
 ---
 
 # Go Implementation — What Claude Gets Wrong

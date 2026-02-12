@@ -1,6 +1,6 @@
 ---
 name: rust-testing
-description: Rust testing mistakes Claude makes. Load when writing or reviewing Rust test code.
+description: Rust test pitfalls — cfg(test) placement, integration vs unit, should_panic. Load only when writing or reviewing #[test] or tests/ directory code.
 ---
 
 # Rust Testing — What Claude Gets Wrong
